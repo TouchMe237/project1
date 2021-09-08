@@ -1,0 +1,18 @@
+Host
+ec2-18-235-45-217.compute-1.amazonaws.com
+Database
+d97ku5o6ogigqb
+User
+jzjjfcyszvormd
+Port
+5432
+Password
+f6d3740e56a6366a8d5c997664924d863b4521e2d8f71939529ab8d80e66808f
+URI
+postgresql://jzjjfcyszvormd:f6d3740e56a6366a8d5c997664924d863b4521e2d8f71939529ab8d80e66808f@ec2-18-235-45-217.compute-1.amazonaws.com:5432/d97ku5o6ogigqb
+Heroku CLI
+heroku pg:psql postgresql-silhouetted-09344 --app project1-to
+
+
+Database=""
+env:APP=""
