@@ -29,7 +29,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template("layout.html")
+    return render_template("index.html")
 
 
 @app.route("/reg", methods=["GET", "POST"])
@@ -37,7 +37,7 @@ def registro():
     """Register user"""
 
     if request.method == "POST":
-
+    
         # asegura se haya elegido un usuario
         if not request.form.get("username"):
             flash("Usuario requerido")
@@ -56,34 +56,31 @@ def registro():
             print("falla confirm")
             return render_template("reg.html")
 
-        elif not request.form.get("correo"):
+        elif not request.form.get("mail"):
             flash("Correo Requerido")
             print("falla correo")
             return render_template("reg.html")
 
-        nicks = db.execute("SELECT username AND correo FROM users WHERE usuario = :usuario OR correo = :correo",
-                            usuario=request.form.get("usuario"),
-                            correo=request.form.get("correo"))
-        #comprueba si el usuario existe
-        if len(nicks) == 1:
-            flash("Usuario o correo utilizados anteriormente")
-            print("falla existe")
-            return render_template("reg.html")
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-        # Inserta al nuevo usuario en la base de datos
-        if len(nicks) != 1:
-            hash = generate_password_hash(request.form.get("password"))
-            nuevo_id = db.execute("INSERT INTO users (username, password, correo) VALUES(:usuario, :hash, :correo)",
-                       usuario=request.form.get("usuario"),
-                       hash=hash,
-                       correo=request.form.get("correo"))
+        nicks = db.execute("""
+            INSERT INTO users(username, password)
+            VALUES(:username, :password) RETURNING id, username
+        """,{
+            "username": username,
+            "password": generate_password_hash(password)
+        }
+        ).fetchone()
 
-        session["user_id"] = nuevo_id
+        db.commit()
+        session["user_id"] = nicks[0]
+        session["username"] = nicks[1]
 
         flash("Registrado con exito")
 
         # redirecciona a la home page
-        return redirect("/")
+        return render_template("index.html")
 
     else:
         return render_template("reg.html")    
