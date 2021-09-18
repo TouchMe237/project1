@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    :Resultado
+{% endblock %}
+
+{% block main %}
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Titulo</th>
+                <th scope="col">Autor</th>
+                <th scope="col">ISBN</th>
+                <th scope="col">YEAR</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in datos %}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td>
+                    <form >
+                        <button type="submit" class="btn btn-link">
+                            {{ row["title"]}}
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form >
+                        <button type="submit" class="btn btn-link">
+                            {{ row["author"]}}
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    {{ row["isbn"]}}
+                </td>
+                <td>
+                    <form >
+                        <button type="submit" class="btn btn-link">
+                            {{ row["year"]}}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

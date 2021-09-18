@@ -1,4 +1,6 @@
 import os
+from sys import argv
+import env
 
 from flask import Flask, redirect, render_template, request, session, redirect,url_for, flash
 from flask import Flask, session
@@ -29,12 +31,11 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("login.html")
 
 
 @app.route("/reg", methods=["GET", "POST"])
 def registro():
-    """Register user"""
 
     if request.method == "POST":
     
@@ -63,12 +64,14 @@ def registro():
 
         username = request.form.get("username")
         password = request.form.get("password")
+        mail = request.form.get("mail")
 
         nicks = db.execute("""
-            INSERT INTO users(username, password)
-            VALUES(:username, :password) RETURNING id, username
+            INSERT INTO usersf(username, password, mail)
+            VALUES(:username, :password, :mail) RETURNING id, username
         """,{
             "username": username,
+            "mail": mail,
             "password": generate_password_hash(password)
         }
         ).fetchone()
@@ -80,7 +83,73 @@ def registro():
         flash("Registrado con exito")
 
         # redirecciona a la home page
+        return redirect("/")
+    else:
+        return render_template("reg.html")    
+
+@app.route("/log", methods=["POST"])
+def login():
+
+    if request.method == "POST":
+
+        mail = request.form.get('mail')
+        password = request.form.get('password')
+
+        result = db.execute("select * from usersf where mail=:mail", {"mail": mail}
+        ).fetchone()
+
+        if not result:
+            print("valimos")
+            return render_template("login.html")
+        else:
+            if check_password_hash(result[2], password):
+                print("iniciando sesión...")
+            
+                session["user_id"] = result[0]
+                session["username"] = result[1]
+            else:
+                print("contraseña incorrecta")
+                return render_template("login.html")
+        
         return render_template("index.html")
 
     else:
-        return render_template("reg.html")    
+        return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
+
+@app.route("/search", methods=["POST"])
+def search():
+
+    if request.method == "POST":
+
+        if request.form.get("search"):
+            search= request.form.get("search").lower()
+            print("1")
+
+        if request.args.get("search"):
+            search= request.args.get("search").lower()
+            print("2")
+
+        search1 = "%" + search + "%"
+        books = db.execute("select * from books where lower(title) like :search or lower(author) like :search or lower(isbn) like :search or lower(year) like :search",
+                            {"search": search1}
+                            ).fetchall()
+        print("3")
+        return render_template("search.html", datos=books)
+
+    else:
+        flash("Busqueda Incorrecta")
+
+@app.route("/book", methods=["POST"])
+def book():
+    if request.method == "POST":
+        return render_template("index.html")
+    
+    else:
+        return render_template("search.html")
