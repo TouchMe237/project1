@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    LIBROS
+{% endblock %}
+
+{% block main %}    
+    {% for row in datos %}
+        {{ row["title"]}}
+        {{ row["author"]}}
+        {{ row["isbn"]}}
+        {{ row["year"]}}
+    {% endfor %}
+{% endblock %}

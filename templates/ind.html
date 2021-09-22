@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    LIBROS
+{% endblock %}
+
+{% block main %}    
+    <form action="/search" method="post">
+        <div class="form-group">
+            <label for="exampleInputEmail1">Username</label>
+            <input type="search" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="search" placeholder="Busqueda">
+            <small id="emailHelp" class="form-text text-muted"></small>
+        </div>
+    </form>
+{% endblock %}

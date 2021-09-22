@@ -1,6 +1,5 @@
 import os
 from sys import argv
-import env
 
 from flask import Flask, redirect, render_template, request, session, redirect,url_for, flash
 from flask import Flask, session
@@ -31,11 +30,20 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
+    session.clear()
     return render_template("login.html")
 
+@app.route("/ind")
+def busqueda():
+    return render_template("ind.html")
+
+@app.route("/login")
+def ingreso():
+    return render_template("login.html")
 
 @app.route("/reg", methods=["GET", "POST"])
 def registro():
+    session.clear()
 
     if request.method == "POST":
     
@@ -83,12 +91,13 @@ def registro():
         flash("Registrado con exito")
 
         # redirecciona a la home page
-        return redirect("/")
+        return render_template("ind.html")
     else:
         return render_template("reg.html")    
 
 @app.route("/log", methods=["POST"])
 def login():
+    session.clear()
 
     if request.method == "POST":
 
@@ -111,7 +120,7 @@ def login():
                 print("contraseña incorrecta")
                 return render_template("login.html")
         
-        return render_template("index.html")
+        return render_template("ind.html")
 
     else:
         return render_template("login.html")
@@ -146,10 +155,6 @@ def search():
     else:
         flash("Busqueda Incorrecta")
 
-@app.route("/book", methods=["POST"])
-def book():
-    if request.method == "POST":
-        return render_template("index.html")
-    
-    else:
-        return render_template("search.html")
+@app.route("/info")
+def inf():
+    return render_template("info.html")
